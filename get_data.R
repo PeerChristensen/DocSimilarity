@@ -16,12 +16,12 @@ df_row <- df %>%
   mutate(text = str_replace_all(text,"\\.","")) %>%
   ungroup() %>%
   tidytext::unnest_tokens(words,text) %>%
-  group_by(title) %>%
+  group_by(title,creator) %>%
   summarise(text = paste(words,collapse = " ")) %>%
   ungroup()
   
-titles <- df_row %>% pull(title)
-write_rds(titles,"titles.rds")
+titles <- df_row %>% select(Title=title,Author=creator)
+write_csv(titles,"titles.csv")
 
 h2o.init()
 
@@ -42,7 +42,7 @@ words <- h2o.tokenize(hf$text,split=" ")
 
 w2v.model <- h2o.word2vec(words, sent_sample_rate = 0, epochs = 3)
 h2o.saveModel(w2v.model,"/Users/peerchristensen/Desktop/Projects/DocSimilarity/models")
-print(h2o.findSynonyms(w2v.model, "sign", count = 5))
+print(h2o.findSynonyms(w2v.model, "evil", count = 5))
 
 vecs <- h2o.transform_word2vec(w2v.model, words, aggregate_method = "AVERAGE")
 h2o.exportFile(vecs,"/Users/peerchristensen/Desktop/Projects/DocSimilarity/vectors.csv",force=T)

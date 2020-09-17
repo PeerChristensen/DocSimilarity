@@ -8,7 +8,9 @@ tic()
 
 h2o.init()
 
-new_title <- epub("circle.epub") %>% 
+file <- "DaVinciCode.epub"
+
+new_title <- epub(file) %>% 
   mutate(Title = paste0(title,"_new"),
          Author = paste0(creator,"_new")) %>%
   select(Title,Author)
@@ -16,7 +18,7 @@ new_title <- epub("circle.epub") %>%
 titles <- read_csv("titles.csv") %>%
   rbind(new_title)
 
-new <- epub("circle.epub") %>%
+new <- epub(file) %>%
   select(data) %>%
   unnest(cols=c(data)) %>%
   select(-nword,-nchar,-section) %>%
@@ -39,8 +41,11 @@ ind <- knnx.index(vecs_all, vecs_all[nrow(vecs_all),], k=7) %>% as.vector()
 
 dist <- knnx.dist(vecs_all, vecs_all[nrow(vecs_all),], k=7) %>% as.vector()
 
-tibble(book = titles[ind[-1],],
-       dist = dist[-1]) %>%
+tibble(book = titles[ind,],
+       dist = dist) %>%
   filter(dist > .0001)
 
+# tibble(book = titles[ind[-1],],
+#        dist = dist[-1]) %>%
+#   filter(dist > .0001)
 toc()
