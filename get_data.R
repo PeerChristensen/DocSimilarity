@@ -2,9 +2,9 @@ library(tidyverse)
 library(epubr)
 library(h2o)
 
-files <- list.files(pattern="epub")
+files <- list.files("books",pattern="epub")
 
-df <- list.files(pattern = "*.epub") %>% 
+df <- list.files("books",pattern = "*.epub",full.names = T) %>% 
   map_df(~epub(.)) %>% 
  # filter(title != "The Da Vinci Code") %>%
   select(title,creator,data) %>%
@@ -42,7 +42,7 @@ words <- h2o.tokenize(hf$text,split=" ")
 
 w2v.model <- h2o.word2vec(words, sent_sample_rate = 0, epochs = 3)
 h2o.saveModel(w2v.model,"/Users/peerchristensen/Desktop/Projects/DocSimilarity/models")
-print(h2o.findSynonyms(w2v.model, "evil", count = 5))
+print(h2o.findSynonyms(w2v.model, "blood", count = 5))
 
 vecs <- h2o.transform_word2vec(w2v.model, words, aggregate_method = "AVERAGE")
 h2o.exportFile(vecs,"/Users/peerchristensen/Desktop/Projects/DocSimilarity/vectors.csv",force=T)

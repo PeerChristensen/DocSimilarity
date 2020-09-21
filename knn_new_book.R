@@ -8,7 +8,7 @@ tic()
 
 h2o.init()
 
-file <- "DaVinciCode.epub"
+file <- "books/dracula.epub"
 
 new_title <- epub(file) %>% 
   mutate(Title = paste0(title,"_new"),
@@ -28,7 +28,7 @@ new <- epub(file) %>%
   as.h2o() %>%
   h2o.tokenize(split= " ")
 
-w2v_model <- h2o.loadModel(list.files("/Users/peerchristensen/Desktop/Projects/DocSimilarity/models",pattern="Word2Vec",full.names = T))
+w2v_model <- h2o.loadModel(list.files("/Users/peerchristensen/Desktop/Projects/DocSimilarity/models",pattern="Word2Vec",full.names = T)[2])
 
 vecs <- h2o.importFile("/Users/peerchristensen/Desktop/Projects/DocSimilarity/vectors.csv")
 
